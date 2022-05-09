@@ -9,6 +9,14 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+const verifyJwt = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send({ message: "unauthorized"});
+  }
+  const token = authHeader.split(' ')[1]
+};
+
 app.get("/", (req, res) => {
   res.send("server is running");
 });
@@ -33,7 +41,7 @@ app.post("/login", (req, res) => {
   }
 });
 
-app.get("/orders", (req, res) => {
+app.get("/orders", verifyJwt, (req, res) => {
   console.log(req.headers.authorization);
   res.send([
     { id: 1, products: "sunglass", price: 799 },
